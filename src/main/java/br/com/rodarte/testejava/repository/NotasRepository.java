@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface NotasRepository extends JpaRepository<Notas, Long> {
 
-    @Query(value = "SELECT nome as nome, " +
-            "format((sum(nota_trimestre_um+nota_trimestre_dois+nota_trimestre_tres)/3),2) as media, " +
-            "floor(datediff(curdate(), data_nascimento) / 365) as idade " +
-            "from notas.t_notas " +
-            "group by nome, data_nascimento " +
-            "order by idade ASC")
+    @Query(value = "SELECT identificacao AS identificacao, nome AS nome, " +
+            "FORMAT((SUM(nota_trimestre_um+nota_trimestre_dois+nota_trimestre_tres)/3),2) AS media, " +
+            "FLOOR(DATEDIFF(CURDATE(), data_nascimento) / 365) AS idade " +
+            "FROM notas.t_notas " +
+            "GROUP BY nome, data_nascimento, identificacao " +
+            "ORDER BY idade ASC", nativeQuery = true)
     List<Notas> tabelaOrganizada();
 
 }

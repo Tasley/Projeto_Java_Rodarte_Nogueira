@@ -3,6 +3,7 @@ package br.com.rodarte.testejava.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -13,18 +14,23 @@ import java.time.LocalDate;
 public class Notas {
 
     @jakarta.persistence.Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "identificacao", nullable = false)
     private Long id;
 
-    private String nome;
-    private char sexo;
+    public String nome;
+    public char sexo;
 
     @Column(name="data_nascimento")
-    private LocalDate dataDeNascimento;
+    @DateTimeFormat(pattern="dd/MM/yyyy")
+    public LocalDate dataNascimento;
 
-    private Float notaTrimestreUm;
-    private Float notaTrimestreDois;
-    private Float notaTrimestreTres;
+    @Column(name="nota_trimestre_um")
+    public Float notaTrimestreUm;
+
+    @Column(name="nota_trimestre_dois")
+    public Float notaTrimestreDois;
+
+    @Column(name="nota_trimestre_tres")
+    public Float notaTrimestreTres;
 
 }

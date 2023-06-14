@@ -21,6 +21,7 @@ public class NotasController {
 
     @Autowired
     private NotasRepository notasRepository;
+    @Autowired
     private ExcelToMySql excelToMySql;
 
     @GetMapping("/todos")
@@ -33,4 +34,8 @@ public class NotasController {
         excelToMySql.importarDados();
     }
 
+    @GetMapping("/tabela-organizada")
+    public List<Notas> tabelaOrganizada() {
+        return notasRepository.tabelaOrganizada();
+    }
 }
