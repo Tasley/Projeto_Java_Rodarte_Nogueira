@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +25,7 @@ public class NotasService {
     private final NotasRepository repository;
 
     public void importarDados() {
-        String excelFilePath = "Docs/Base Importação Teste RN.xlsx";
+        String excelFilePath = "Docs/Documentos_Base/Base Importação Teste RN.xlsx";
 
         Notas nota;
         try (FileInputStream inputStream = new FileInputStream(excelFilePath);
@@ -65,6 +66,32 @@ public class NotasService {
 
             repository.saveAll(notas);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportToExcel(String fileName) {
+        try (Workbook workbook = new XSSFWorkbook();
+             FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+            Sheet sheet = workbook.createSheet("Dados");
+
+            List<NotasRepository.TabelaNotasDTO> dados = repository.tabelaOrganizada();
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Nome");
+            headerRow.createCell(1).setCellValue("Média de Notas");
+            headerRow.createCell(2).setCellValue("Idade");
+
+            int rowNum = 1;
+            for (NotasRepository.TabelaNotasDTO dado : dados) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(dado.getNome());
+                row.createCell(1).setCellValue(dado.getMedia());
+                row.createCell(2).setCellValue(dado.getIdade());
+            }
+
+            workbook.write(fileOutputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }

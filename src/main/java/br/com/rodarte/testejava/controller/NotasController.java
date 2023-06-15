@@ -40,4 +40,10 @@ public class NotasController {
     public List<NotasRepository.TabelaNotasDTO> tabelaOrganizada() {
         return notasRepository.tabelaOrganizada();
     }
+
+    @GetMapping("/exportar-excel")
+    public String exportarParaExcel() {
+        service.exportToExcel("Docs/Export da tabela/relatorio-alunos.xlsx");
+        return "Sucesso na exportação";
+    }
 }
