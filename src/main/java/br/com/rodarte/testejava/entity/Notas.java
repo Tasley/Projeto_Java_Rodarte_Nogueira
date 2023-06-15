@@ -17,20 +17,20 @@ public class Notas {
     @Column(name = "identificacao", nullable = false)
     private Long id;
 
-    public String nome;
-    public char sexo;
+    private String nome;
+    private char sexo;
 
     @Column(name="data_nascimento")
     @DateTimeFormat(pattern="dd/MM/yyyy")
-    public LocalDate dataNascimento;
+    private LocalDate dataNascimento;
 
     @Column(name="nota_trimestre_um")
-    public Float notaTrimestreUm;
+    private Float notaTrimestreUm;
 
     @Column(name="nota_trimestre_dois")
-    public Float notaTrimestreDois;
+    private Float notaTrimestreDois;
 
     @Column(name="nota_trimestre_tres")
-    public Float notaTrimestreTres;
+    private Float notaTrimestreTres;
 
 }

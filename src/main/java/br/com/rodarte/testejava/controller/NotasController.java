@@ -1,5 +1,7 @@
 package br.com.rodarte.testejava.controller;
 
+import br.com.rodarte.testejava.DTO.NotasDTO;
+import br.com.rodarte.testejava.converters.NotasConverter;
 import br.com.rodarte.testejava.entity.Notas;
 import br.com.rodarte.testejava.repository.NotasRepository;
 import br.com.rodarte.testejava.service.ExcelToMySql;
@@ -20,13 +22,14 @@ import java.util.List;
 public class NotasController {
 
     @Autowired
-    private NotasRepository notasRepository;
+    private final NotasRepository notasRepository;
     @Autowired
-    private ExcelToMySql excelToMySql;
+    private final ExcelToMySql excelToMySql;
+    private final NotasConverter converter;
 
     @GetMapping("/todos")
-    public List<Notas> listaCompleta() {
-        return notasRepository.findAll();
+    public List<NotasDTO> listaCompleta() {
+        return notasRepository.findAll().stream().map(converter::entityToDTO).toList();
     }
 
     @PatchMapping("/extrair-excel")
@@ -35,7 +38,7 @@ public class NotasController {
     }
 
     @GetMapping("/tabela-organizada")
-    public List<Notas> tabelaOrganizada() {
+    public List<NotasRepository.TabelaNotasDTO> tabelaOrganizada() {
         return notasRepository.tabelaOrganizada();
     }
 }

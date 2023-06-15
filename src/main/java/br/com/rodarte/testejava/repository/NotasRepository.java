@@ -14,6 +14,15 @@ public interface NotasRepository extends JpaRepository<Notas, Long> {
             "FROM notas.t_notas " +
             "GROUP BY nome, data_nascimento, identificacao " +
             "ORDER BY idade ASC", nativeQuery = true)
-    List<Notas> tabelaOrganizada();
+    List<TabelaNotasDTO> tabelaOrganizada();
 
+    interface TabelaNotasDTO {
+        String getIdentificacao();
+
+        String getNome();
+
+        double getMedia();
+
+        int getIdade();
+    }
 }
