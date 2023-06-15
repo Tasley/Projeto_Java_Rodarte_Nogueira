@@ -2,7 +2,6 @@ package br.com.rodarte.testejava.controller;
 
 import br.com.rodarte.testejava.DTO.NotasDTO;
 import br.com.rodarte.testejava.converters.NotasConverter;
-import br.com.rodarte.testejava.entity.Notas;
 import br.com.rodarte.testejava.repository.NotasRepository;
 import br.com.rodarte.testejava.service.ExcelToMySql;
 import jakarta.annotation.security.PermitAll;
