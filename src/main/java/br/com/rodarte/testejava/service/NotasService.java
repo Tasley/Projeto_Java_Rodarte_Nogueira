@@ -19,13 +19,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ExcelToMySql {
+public class NotasService {
 
-    private final NotasRepository notasRepository;
+    private final NotasRepository repository;
 
     public void importarDados() {
         String excelFilePath = "Docs/Base Importação Teste RN.xlsx";
 
+        Notas nota;
         try (FileInputStream inputStream = new FileInputStream(excelFilePath);
              Workbook workbook = new XSSFWorkbook(inputStream)) {
 
@@ -50,7 +51,7 @@ public class ExcelToMySql {
                 float notaTrimestre2 = (float) row.getCell(5).getNumericCellValue();
                 float notaTrimestre3 = (float) row.getCell(6).getNumericCellValue();
 
-                Notas nota = new Notas();
+                nota = new Notas();
                 nota.setId(id);
                 nota.setNome(nome);
                 nota.setSexo(sexo);
@@ -62,7 +63,7 @@ public class ExcelToMySql {
                 notas.add(nota);
             }
 
-            notasRepository.saveAll(notas);
+            repository.saveAll(notas);
 
         } catch (IOException e) {
             e.printStackTrace();

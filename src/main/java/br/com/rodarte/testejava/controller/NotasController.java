@@ -3,7 +3,7 @@ package br.com.rodarte.testejava.controller;
 import br.com.rodarte.testejava.DTO.NotasDTO;
 import br.com.rodarte.testejava.converters.NotasConverter;
 import br.com.rodarte.testejava.repository.NotasRepository;
-import br.com.rodarte.testejava.service.ExcelToMySql;
+import br.com.rodarte.testejava.service.NotasService;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class NotasController {
     @Autowired
     private final NotasRepository notasRepository;
     @Autowired
-    private final ExcelToMySql excelToMySql;
+    private final NotasService service;
     private final NotasConverter converter;
 
     @GetMapping("/todos")
@@ -33,7 +33,7 @@ public class NotasController {
 
     @PatchMapping("/extrair-excel")
     public void importarDados() {
-        excelToMySql.importarDados();
+        service.importarDados();
     }
 
     @GetMapping("/tabela-organizada")
