@@ -1,7 +1,9 @@
 package br.com.rodarte.testejava.service;
 
+import br.com.rodarte.testejava.entity.Notas;
+import br.com.rodarte.testejava.repository.NotasRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -9,70 +11,60 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ExcelToMySql {
 
+    private final NotasRepository notasRepository;
+
     public void importarDados() {
-        String jdbcURL = "jdbc:mysql://localhost:3306/notas";
-        String username = "root";
-        String password = "28012011";
-
         String excelFilePath = "Docs/Base Importação Teste RN.xlsx";
-        String tableName = "notas.t_notas";
 
-        try (Connection connection = DriverManager.getConnection(jdbcURL, username, password)) {
-            FileInputStream fileInputStream = new FileInputStream(excelFilePath);
-            Workbook workbook = new XSSFWorkbook(fileInputStream);
+        try (FileInputStream inputStream = new FileInputStream(excelFilePath);
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+
             Sheet sheet = workbook.getSheetAt(0);
+            List<Notas> notas = new ArrayList<>();
 
-            int batchSize = 20;
-            int currentBatchSize = 0;
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-            StringBuilder query = new StringBuilder();
-            query.append("INSERT INTO ").append(tableName).append(" (coluna1, coluna2, coluna3, coluna4, coluna 5," +
-                    " coluna 6, coluna 7) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
 
-            PreparedStatement statement = connection.prepareStatement(query.toString());
-
-            for (Row row : sheet) {
-                Cell cell1 = row.getCell(0);
-                Cell cell2 = row.getCell(1);
-                Cell cell3 = row.getCell(2);
-                Cell cell4 = row.getCell(3);
-                Cell cell5 = row.getCell(4);
-                Cell cell6 = row.getCell(5);
-                Cell cell7 = row.getCell(6);
-                Cell cell8 = row.getCell(7);
-
-                statement.setString(1, cell1.getStringCellValue());
-                statement.setString(2, cell2.getStringCellValue());
-                statement.setString(3, cell3.getStringCellValue());
-                statement.setString(4, cell4.getStringCellValue());
-                statement.setString(5, cell5.getStringCellValue());
-                statement.setString(6, cell6.getStringCellValue());
-                statement.setString(7, cell7.getStringCellValue());
-                statement.setNull(8, cell8.get);
-
-                statement.addBatch();
-
-                currentBatchSize++;
-
-                if (currentBatchSize % batchSize == 0) {
-                    statement.executeBatch();
+                Long id = (long) row.getCell(0).getNumericCellValue();
+                String nome = row.getCell(1).getStringCellValue();
+                char sexo = row.getCell(2).getStringCellValue().charAt(0);
+                LocalDate dataNascimento;
+                if (row.getCell(3).getCellType() == CellType.NUMERIC) {
+                    dataNascimento = row.getCell(3).getLocalDateTimeCellValue().toLocalDate();
+                } else {
+                    dataNascimento = LocalDate.parse(row.getCell(3).getStringCellValue(), dateFormatter);
                 }
+                float notaTrimestre1 = (float) row.getCell(4).getNumericCellValue();
+                float notaTrimestre2 = (float) row.getCell(5).getNumericCellValue();
+                float notaTrimestre3 = (float) row.getCell(6).getNumericCellValue();
+
+                Notas nota = new Notas();
+                nota.setId(id);
+                nota.setNome(nome);
+                nota.setSexo(sexo);
+                nota.setDataNascimento(dataNascimento);
+                nota.setNotaTrimestreUm(notaTrimestre1);
+                nota.setNotaTrimestreDois(notaTrimestre2);
+                nota.setNotaTrimestreTres(notaTrimestre3);
+
+                notas.add(nota);
             }
 
-            statement.executeBatch();
+            notasRepository.saveAll(notas);
 
-            workbook.close();
-            fileInputStream.close();
-
-            System.out.println("Os dados foram adicionados com sucesso no MySQL.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
