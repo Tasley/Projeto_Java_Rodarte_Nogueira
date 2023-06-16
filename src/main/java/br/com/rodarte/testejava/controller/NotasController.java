@@ -7,6 +7,8 @@ import br.com.rodarte.testejava.service.NotasService;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +34,9 @@ public class NotasController {
     }
 
     @PatchMapping("/extrair-excel")
-    public void importarDados() {
+    public ResponseEntity<String> importarDados() {
         service.importarDados();
+        return  ResponseEntity.status(HttpStatus.OK).body("Dados extraídos com sucesso!");
     }
 
     @GetMapping("/tabela-organizada")
@@ -42,8 +45,8 @@ public class NotasController {
     }
 
     @GetMapping("/exportar-excel")
-    public String exportarParaExcel() {
+    public ResponseEntity<String> exportarParaExcel() {
         service.exportToExcel("Docs/Export da tabela/relatorio-alunos.xlsx");
-        return "Sucesso na exportação";
+        return ResponseEntity.status(HttpStatus.OK).body( "Dados exportados para o arquivo 'relatorio-alunos.xlsx'");
     }
 }
